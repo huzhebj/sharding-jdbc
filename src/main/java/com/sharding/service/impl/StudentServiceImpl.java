@@ -1,5 +1,6 @@
 package com.sharding.service.impl;
 
+import com.dangdang.ddframe.rdb.sharding.id.generator.self.CommonSelfIdGenerator;
 import com.sharding.mapper.StudentMapper;
 import com.sharding.pojo.Student;
 import com.sharding.service.StudentService;
@@ -16,6 +17,9 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public Student addStudent(Student student) {
+        CommonSelfIdGenerator commonSelfIdGenerator = new CommonSelfIdGenerator();
+        commonSelfIdGenerator.generateId();
+        student.setId(new CommonSelfIdGenerator().generateId().longValue());
         studentMapper.addStudent(student);
         return student;
     }

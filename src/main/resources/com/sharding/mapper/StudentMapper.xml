@@ -3,8 +3,12 @@
 <mapper namespace="com.sharding.mapper.StudentMapper">
     <insert id="addStudent" parameterType="com.sharding.pojo.Student" useGeneratedKeys="true" keyProperty="id">
         insert into tbl_student(
+        id,
+        age,
         name
         )VALUES(
+        #{id},
+        #{age},
         #{name}
         )
     </insert>
