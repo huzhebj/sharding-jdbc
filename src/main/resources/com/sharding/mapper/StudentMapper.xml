@@ -28,6 +28,7 @@
                 #{id}
             </foreach>
         </if>
+        order by age desc
     </select>
 
     <update id="updateStudent" parameterType="com.sharding.pojo.Student">
