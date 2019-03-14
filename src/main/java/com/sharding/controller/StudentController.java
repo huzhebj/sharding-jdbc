@@ -1,5 +1,6 @@
 package com.sharding.controller;
 
+import com.sharding.pojo.GetStudentListDto;
 import com.sharding.pojo.Student;
 import com.sharding.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,8 +43,8 @@ public class StudentController {
 
     //查询学生列表
     @RequestMapping(value = "/getStudentList", method = RequestMethod.POST)
-    public List<Student> getStudentList(@RequestBody Student student) {
-        List<Student> list = studentService.getStudentList(student);
+    public List<Student> getStudentList(@RequestBody GetStudentListDto dto) {
+        List<Student> list = studentService.getStudentList(dto);
         return list;
     }
 }

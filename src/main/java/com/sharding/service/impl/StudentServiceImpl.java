@@ -2,12 +2,17 @@ package com.sharding.service.impl;
 
 import com.dangdang.ddframe.rdb.sharding.id.generator.self.CommonSelfIdGenerator;
 import com.sharding.mapper.StudentMapper;
+import com.sharding.pojo.GetStudentListDto;
 import com.sharding.pojo.Student;
 import com.sharding.service.StudentService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class StudentServiceImpl implements StudentService {
@@ -37,7 +42,15 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public List<Student> getStudentList(Student student) {
-        return studentMapper.getStudentList(student);
+    public List<Student> getStudentList(GetStudentListDto dto) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", dto.getId());
+        map.put("name", dto.getName());
+        String ids = dto.getIds();
+        if (StringUtils.isNotBlank(ids)) {
+            map.put("idList", Arrays.asList(ids.split(",")));
+        }
+        List<Student> list = studentMapper.getStudentList(map);
+        return list;
     }
 }

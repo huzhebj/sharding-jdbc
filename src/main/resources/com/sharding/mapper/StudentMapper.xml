@@ -13,14 +13,20 @@
         )
     </insert>
 
-    <select id="getStudentList" parameterType="com.sharding.pojo.Student" resultType="com.sharding.pojo.Student">
-        select id,name from tbl_student
+    <select id="getStudentList" parameterType="map" resultType="com.sharding.pojo.Student">
+        select id,age,name from tbl_student
         where 1 = 1
         <if test="id != null">
             and id = #{id}
         </if>
         <if test="name != null">
             and name like concat('%',#{name},'%')
+        </if>
+        <if test="idList != null and idList.size > 0">
+            and id in
+            <foreach collection="idList" open="(" item="id" separator="," close=")">
+                #{id}
+            </foreach>
         </if>
     </select>
 
