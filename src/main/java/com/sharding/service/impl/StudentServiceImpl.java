@@ -18,8 +18,8 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public Student addStudent(Student student) {
         CommonSelfIdGenerator commonSelfIdGenerator = new CommonSelfIdGenerator();
-        commonSelfIdGenerator.generateId();
-        student.setId(new CommonSelfIdGenerator().generateId().longValue());
+        long id = commonSelfIdGenerator.generateId().longValue();
+        student.setId(id);
         studentMapper.addStudent(student);
         return student;
     }
