@@ -5,30 +5,39 @@
         insert into tbl_student(
         id,
         age,
+        <if test="cityID != null">
+            cityID,
+        </if>
         name
         )VALUES(
         #{id},
         #{age},
+        <if test="cityID != null">
+            #{cityID},
+        </if>
         #{name}
         )
     </insert>
 
     <select id="getStudentList" parameterType="map" resultType="com.sharding.pojo.Student">
-        select id,age,name from tbl_student
+        select t1.id,t1.age,t1.name,t1.cityID,t2.cityName
+        from tbl_student t1
+        left join tbl_city t2
+        on t1.cityID = t2.id
         where 1 = 1
         <if test="id != null">
-            and id = #{id}
+            and t1.id = #{id}
         </if>
         <if test="name != null">
-            and name like concat('%',#{name},'%')
+            and t1.name like concat('%',#{name},'%')
         </if>
         <if test="idList != null and idList.size > 0">
-            and id in
+            and t1.id in
             <foreach collection="idList" open="(" item="id" separator="," close=")">
                 #{id}
             </foreach>
         </if>
-        order by age desc
+        order by t1.age desc
     </select>
 
     <update id="updateStudent" parameterType="com.sharding.pojo.Student">
