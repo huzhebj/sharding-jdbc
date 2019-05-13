@@ -1,4 +1,4 @@
-使用sharding-jdbc实现分表
+使用sharding-jdbc实现分库分表
 
 根据cityID分库  
 db_student_0、db_student_1、db_student_2、db_student_3、db_student_4
