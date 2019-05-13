@@ -1,3 +1,4 @@
+#############################################学生分库分表sql
 #创建学生库
 CREATE DATABASE `db_student_0`;
 CREATE DATABASE `db_student_1`;

@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.sharding.mapper.StudentMapper">
+<mapper namespace="com.sharding.mapper.student.StudentMapper">
     <insert id="addStudent" parameterType="com.sharding.pojo.Student" useGeneratedKeys="true" keyProperty="id">
         insert into tbl_student(
-        id,
+        studentId,
         age,
-        <if test="cityID != null">
-            cityID,
+        <if test="cityId != null">
+            cityId,
         </if>
         name
         )VALUES(
-        #{id},
+        #{studentId},
         #{age},
-        <if test="cityID != null">
-            #{cityID},
+        <if test="cityId != null">
+            #{cityId},
         </if>
         #{name}
         )

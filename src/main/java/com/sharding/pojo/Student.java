@@ -4,14 +4,16 @@ import lombok.Data;
 
 @Data
 public class Student {
-    //学生id
+    //记录id
     private long id;
-    //学生年龄
-    private long age;
+    //学生id
+    private long studentId;
+    //城市id
+    private int cityId;
     //学生姓名
     private String name;
-    //城市id
-    private String cityID;
+    //学生年龄
+    private int age;
     //城市名称
     private String cityName;
 }

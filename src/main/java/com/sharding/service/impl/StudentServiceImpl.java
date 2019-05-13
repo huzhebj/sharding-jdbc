@@ -1,7 +1,7 @@
 package com.sharding.service.impl;
 
 import com.dangdang.ddframe.rdb.sharding.id.generator.self.CommonSelfIdGenerator;
-import com.sharding.mapper.StudentMapper;
+import com.sharding.mapper.student.StudentMapper;
 import com.sharding.pojo.GetStudentListDto;
 import com.sharding.pojo.Student;
 import com.sharding.service.StudentService;
@@ -23,8 +23,8 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public Student addStudent(Student student) {
         CommonSelfIdGenerator commonSelfIdGenerator = new CommonSelfIdGenerator();
-        long id = commonSelfIdGenerator.generateId().longValue();
-        student.setId(id);
+        long studentId = commonSelfIdGenerator.generateId().longValue();//此种方式生成的id大多为偶数
+        student.setStudentId(studentId);
         studentMapper.addStudent(student);
         return student;
     }

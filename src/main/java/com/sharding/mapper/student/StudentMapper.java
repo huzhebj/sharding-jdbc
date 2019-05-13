@@ -1,4 +1,4 @@
-package com.sharding.mapper;
+package com.sharding.mapper.student;
 
 import com.sharding.pojo.Student;
 import org.apache.ibatis.annotations.Mapper;
