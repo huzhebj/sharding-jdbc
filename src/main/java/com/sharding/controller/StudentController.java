@@ -8,10 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/student")
@@ -25,6 +22,17 @@ public class StudentController {
     public Student addStudent(@RequestBody Student student) {
         Student result = studentService.addStudent(student);
         return result;
+    }
+
+    //批量新增学生
+    @RequestMapping(value = "/addStudentBatch", method = RequestMethod.POST)
+    public Student addStudentBatch(@RequestBody Student student) {
+        String name = student.getName();
+        for (int i = 1; i < 10001; i++) {
+            student.setName(name + i);
+            studentService.addStudent(student);
+        }
+        return null;
     }
 
     //修改学生

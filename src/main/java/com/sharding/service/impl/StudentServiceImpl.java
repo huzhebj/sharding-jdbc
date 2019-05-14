@@ -6,7 +6,11 @@ import com.sharding.pojo.GetStudentListDto;
 import com.sharding.pojo.Student;
 import com.sharding.service.StudentService;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -17,16 +21,42 @@ import java.util.Map;
 @Service
 public class StudentServiceImpl implements StudentService {
 
+    private static  final Logger logger = LoggerFactory.getLogger(StudentServiceImpl.class);
+
+    private static final String STUDENTID_INCREMENT = "STUDENTID_INCREMENT";
+
+    @Autowired
+    @Qualifier("commonRedisTemplate")
+    private RedisTemplate<String, String> commonRedisTemplate;
+
     @Autowired
     private StudentMapper studentMapper;
 
     @Override
     public Student addStudent(Student student) {
-        CommonSelfIdGenerator commonSelfIdGenerator = new CommonSelfIdGenerator();
-        long studentId = commonSelfIdGenerator.generateId().longValue();//此种方式生成的id大多为偶数
-        student.setStudentId(studentId);
+        student.setStudentId(getStudentId2());
+        logger.info("add student-->" + student);
         studentMapper.addStudent(student);
         return student;
+    }
+
+    //使用sharding-jdbc自带的id生成器生成，此种生成方式的弊端是生成的id大多为偶数
+    public long getStudentId1(){
+        CommonSelfIdGenerator commonSelfIdGenerator = new CommonSelfIdGenerator();
+        return commonSelfIdGenerator.generateId().longValue();
+    }
+
+    //Redis生成ID
+    public long getStudentId2(){
+        String studentId = commonRedisTemplate.opsForValue().get(STUDENTID_INCREMENT);
+        if(StringUtils.isBlank(studentId)){
+            studentId = "1";
+            commonRedisTemplate.opsForValue().set(STUDENTID_INCREMENT,"1");
+        }else{
+            commonRedisTemplate.opsForValue().increment(STUDENTID_INCREMENT,1);
+            studentId = commonRedisTemplate.opsForValue().get(STUDENTID_INCREMENT);
+        }
+        return Long.parseLong(studentId);
     }
 
     @Override
