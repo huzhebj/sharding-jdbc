@@ -119,4 +119,94 @@ public class DataSourceConfig {
      * ********************************************student的分库分表配置end********************************************
      */
 
+    /**
+     * 以下内容是teacher的分库分表配置
+     * ********************************************teacher的分库分表配置start********************************************
+     */
+    @Value("${spring.db_teacher.url}")
+    private String teacherUrl;
+
+    @Value("${spring.db_teacher.username}")
+    private String teacherUsername;
+
+    @Value("${spring.db_teacher.password}")
+    private String teacherPassword;
+
+    @Value("${spring.db_teacher.initial-size}")
+    private int teacherInitialSize;
+
+    @Value("${spring.db_teacher.max-active}")
+    private int teacherMaxActive;
+
+    @Value("${spring.db_teacher.min-idle}")
+    private int teacherMinIdle;
+
+    @Value("${spring.db_teacher.validation-query}")
+    private String teacherValidationQuery;
+
+    @Value("${spring.db_teacher.test-on-borrow}")
+    private boolean teacherTestOnBorrow;
+
+    @Value("${spring.db_teacher.test-while-idle}")
+    private boolean teacherTestWhileIdle;
+
+    @Bean("teacherDataSource")
+    @ConfigurationProperties(prefix = "spring.db_teacher")
+    public DataSource teacherDataSource() {
+        return buildTeacherDataSource();
+    }
+
+    @Bean
+    public DataSourceTransactionManager teacherTransactitonManager(@Qualifier("teacherDataSource") DataSource teacherDataSource){
+        return new DataSourceTransactionManager(teacherDataSource);
+    }
+
+    private DataSource buildTeacherDataSource() {
+        //1.设置分库映射
+        Map<String, DataSource> dataSourceMap = new HashMap<>();
+        dataSourceMap.put("db_teacher_0", createTeacherDataSource("db_teacher_0"));
+        dataSourceMap.put("db_teacher_1", createTeacherDataSource("db_teacher_1"));
+        dataSourceMap.put("db_teacher_2", createTeacherDataSource("db_teacher_2"));
+        //设置默认库，两个库以上时必须设置默认库。默认库的数据源名称必须是dataSourceMap的key之一
+        DataSourceRule dataSourceRule = new DataSourceRule(dataSourceMap, "db_teacher_0");
+
+        //2.设置分表映射
+        //tbl_teacher_*表
+        TableRule teacherTableRule = TableRule.builder("tbl_teacher")
+                .dataSourceRule(dataSourceRule)
+                .databaseShardingStrategy(new DatabaseShardingStrategy("cityId",new TeacherDbShardingAlgorithm()))
+                .actualTables(Arrays.asList("tbl_teacher_0", "tbl_teacher_1", "tbl_teacher_2", "tbl_teacher_3", "tbl_teacher_4"))
+                .tableShardingStrategy(new TableShardingStrategy("teacherId", new TeacherTableShardingAlgorithm()))
+                .build();
+
+        //3.具体的分库分表策略
+        ShardingRule shardingRule = ShardingRule.builder()
+                .dataSourceRule(dataSourceRule)
+                .tableRules(Arrays.asList(teacherTableRule))
+                .build();
+        DataSource dataSource = ShardingDataSourceFactory.createDataSource(shardingRule);
+        return dataSource;
+    }
+
+    private DataSource createTeacherDataSource(String dataSourceName) {
+        //使用druid连接数据库
+        DruidDataSource druidDataSource = new DruidDataSource();
+        druidDataSource.setDriverClassName("com.mysql.jdbc.Driver");
+        druidDataSource.setUrl(String.format(teacherUrl, dataSourceName));
+        druidDataSource.setUsername(teacherUsername);
+        druidDataSource.setPassword(teacherPassword);
+        druidDataSource.setInitialSize(teacherInitialSize);
+        druidDataSource.setMaxActive(teacherMaxActive);
+        druidDataSource.setMinIdle(teacherMinIdle);
+        druidDataSource.setValidationQuery(teacherValidationQuery);
+        druidDataSource.setTestOnBorrow(teacherTestOnBorrow);
+        druidDataSource.setTestWhileIdle(teacherTestWhileIdle);
+
+        return druidDataSource;
+    }
+    /**
+     * 以上内容是teacher的分库分表配置
+     * ********************************************teacher的分库分表配置end********************************************
+     */
+
 }
